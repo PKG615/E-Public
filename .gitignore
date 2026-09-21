@@ -3,17 +3,11 @@
 # ==========================================
 
 # Environment files
-.env
-.env.*
-!.env.example
 
 # Node dependencies
 node_modules/
 
 # Build output
-dist/
-build/
-.vite/
 
 # Logs
 npm-debug.log*
