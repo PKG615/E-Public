@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CartResponse, CartItemResponse, Product, ProductVariant } from '../types';
 import { cartService } from '../services/api';
 import { useAuth } from './AuthContext';
@@ -43,7 +44,8 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [cart, setCart] = useState<CartResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
@@ -92,6 +94,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     variantOrId?: ProductVariant | number | null,
     quantity: number = 1
   ): Promise<{ success: boolean; message: string }> => {
+    if (!isAuthenticated) {
+      const message = 'Please create an account or sign in before adding products to your cart.';
+      setError(message);
+      navigate('/account', { state: { authRequired: true, message, returnTo: window.location.pathname } });
+      return { success: false, message };
+    }
     setIsUpdating(true);
     setError(null);
     try {

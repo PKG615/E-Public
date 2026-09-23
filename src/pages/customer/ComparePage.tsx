@@ -21,11 +21,13 @@ export const ComparePage: React.FC = () => {
   const [addedIds, setAddedIds] = React.useState<number[]>([]);
 
   const handleAddToCart = (item: typeof compareItems[0]) => {
-    addToCart(item.product, undefined, 1);
-    setAddedIds((prev) => [...prev, item.product_id]);
+    addToCart(item.product, undefined, 1).then((result) => {
+      if (!result.success) return;
+      setAddedIds((prev) => [...prev, item.product_id]);
     setTimeout(() => {
       setAddedIds((prev) => prev.filter((id) => id !== item.product_id));
-    }, 2000);
+      }, 2000);
+    });
   };
 
   // Extract all unique specification keys across compared products

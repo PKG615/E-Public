@@ -64,6 +64,21 @@ export const CartPage: React.FC = () => {
     checkPincode(inputPincode);
   };
 
+  if (!isAuthenticated) {
+    return (
+      <div className="max-w-md mx-auto px-4 py-16 text-center">
+        <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4 text-neutral-400">
+          <ShoppingBag className="w-8 h-8" />
+        </div>
+        <h2 className="text-xl font-bold text-neutral-900">Create an Account to Use Your Cart</h2>
+        <p className="text-xs text-neutral-500 mt-2 mb-6">Guests can explore products. Please create an account or sign in before shopping and checkout.</p>
+        <button onClick={() => navigate('/account', { state: { authRequired: true, returnTo: '/cart' } })} className="inline-flex items-center gap-2 px-5 py-2.5 bg-neutral-900 text-white text-xs font-bold rounded-xl hover:bg-neutral-800 transition-colors">
+          Sign in / Create Account
+        </button>
+      </div>
+    );
+  }
+
   if (isLoading && items.length === 0) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-24 text-center space-y-3">

@@ -180,11 +180,13 @@ export const ProductDetailPage: React.FC = () => {
     setZoomPos((prev) => ({ ...prev, show: false }));
   };
 
-  const handleAdd = () => {
-    if (!product || !inStock) return;
-    addToCart(product, selectedVariant || undefined, quantity);
+  const handleAdd = async (): Promise<boolean> => {
+    if (!product || !inStock) return false;
+    const result = await addToCart(product, selectedVariant || undefined, quantity);
+    if (!result.success) return false;
     setAddedSuccess(true);
     setTimeout(() => setAddedSuccess(false), 2200);
+    return true;
   };
 
   const handlePincodeCheck = (e: React.FormEvent) => {
@@ -562,9 +564,9 @@ export const ProductDetailPage: React.FC = () => {
               {inStock ? (
                 <button
                   type="button"
-                  onClick={() => {
-                    handleAdd();
-                    navigate('/cart');
+                  onClick={async () => {
+                    const added = await handleAdd();
+                    if (added) navigate('/cart');
                   }}
                   className="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-3 px-4 rounded-xl transition-colors text-center shadow-xs"
                 >

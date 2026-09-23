@@ -21,9 +21,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     if (isOutOfStock) return;
 
     const primaryVariant = product.variants && product.variants.length > 0 ? product.variants[0] : undefined;
-    addToCart(product, primaryVariant, 1);
-    setIsAdded(true);
-    setTimeout(() => setIsAdded(false), 1800);
+    addToCart(product, primaryVariant, 1).then((result) => {
+      if (!result.success) return;
+      setIsAdded(true);
+      setTimeout(() => setIsAdded(false), 1800);
+    });
   };
 
   return (

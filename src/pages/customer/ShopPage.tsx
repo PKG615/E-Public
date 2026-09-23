@@ -321,9 +321,11 @@ export const ShopPage: React.FC = () => {
   const handleAddToCart = (e: React.MouseEvent, prod: Product) => {
     e.preventDefault();
     const primaryVariant = prod.variants && prod.variants.length > 0 ? prod.variants[0] : undefined;
-    addToCart(prod, primaryVariant, 1);
-    setAddedProductId(prod.id);
-    setTimeout(() => setAddedProductId(null), 1800);
+    addToCart(prod, primaryVariant, 1).then((result) => {
+      if (!result.success) return;
+      setAddedProductId(prod.id);
+      setTimeout(() => setAddedProductId(null), 1800);
+    });
   };
 
   // Compute Active Filter Chips

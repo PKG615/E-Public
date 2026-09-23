@@ -19,7 +19,8 @@ export const WishlistPage: React.FC = () => {
   const [movedId, setMovedId] = React.useState<number | null>(null);
 
   const handleMoveToCart = async (item: typeof wishlistItems[0]) => {
-    addToCart(item.product, undefined, 1);
+    const result = await addToCart(item.product, undefined, 1);
+    if (!result.success) return;
     setMovedId(item.product_id);
     setTimeout(async () => {
       await removeFromWishlist(item.product_id);

@@ -30,9 +30,11 @@ export const ProductGridSection: React.FC<ProductGridSectionProps> = ({
     if (product.stock <= 0) return;
 
     const primaryVariant = product.variants && product.variants.length > 0 ? product.variants[0] : undefined;
-    addToCart(product, primaryVariant, 1);
-    setAddedProductId(product.id);
-    setTimeout(() => setAddedProductId(null), 1800);
+    addToCart(product, primaryVariant, 1).then((result) => {
+      if (!result.success) return;
+      setAddedProductId(product.id);
+      setTimeout(() => setAddedProductId(null), 1800);
+    });
   };
 
   return (
