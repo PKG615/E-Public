@@ -1,77 +1,87 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import { CartProvider } from './context/CartContext';
-import { WishlistCompareProvider } from './context/WishlistCompareContext';
-import { Header } from './components/common/Header';
-import { Navbar } from './components/common/Navbar';
-import { Footer } from './components/common/Footer';
-import { HomePage } from './pages/customer/HomePage';
-import { ShopPage } from './pages/customer/ShopPage';
-import { ProductDetailPage } from './pages/customer/ProductDetailPage';
-import { CartPage } from './pages/customer/CartPage';
-import { WishlistPage } from './pages/customer/WishlistPage';
-import { ComparePage } from './pages/customer/ComparePage';
-import { CheckoutPage } from './pages/customer/CheckoutPage';
-import { AddressesPage } from './pages/customer/AddressesPage';
-import { OrdersPage } from './pages/customer/OrdersPage';
-import { OrderDetailPage } from './pages/customer/OrderDetailPage';
-import { OrderTrackingPage } from './pages/customer/OrderTrackingPage';
-import { OrderConfirmationPage } from './pages/customer/OrderConfirmationPage';
-import { CustomerReturnsPage } from './pages/customer/CustomerReturnsPage';
-import { CustomerReviewsPage } from './pages/customer/CustomerReviewsPage';
-import { AccountPage } from './pages/customer/AccountPage';
-import { CollectionDetailPage } from './pages/customer/CollectionDetailPage';
-import { CollectionsListPage } from './pages/customer/CollectionsListPage';
+import React, { useState } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { AdminLayout, AdminTab } from './components/admin/AdminLayout';
+import { AdminDashboard } from './pages/admin/AdminDashboard';
+import { AdminProducts } from './pages/admin/AdminProducts';
+import { AdminInventory } from './pages/admin/AdminInventory';
+import { AdminCategories } from './pages/admin/AdminCategories';
+import { AdminBrands } from './pages/admin/AdminBrands';
+import { AdminBanners } from './pages/admin/AdminBanners';
+import { AdminCollections } from './pages/admin/AdminCollections';
+import { AdminOrders } from './pages/admin/AdminOrders';
+import { AdminShipments } from './pages/admin/AdminShipments';
+import { AdminReturns } from './pages/admin/AdminReturns';
+import { AdminReviews } from './pages/admin/AdminReviews';
+import { AdminSupport } from './pages/admin/AdminSupport';
+import { AdminCustomers } from './pages/admin/AdminCustomers';
+import { AdminMarketing } from './pages/admin/AdminMarketing';
+import { AdminAnalytics } from './pages/admin/AdminAnalytics';
+
+function Login() {
+  const { login, loading } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    const ok = await login(email.trim(), password);
+    if (!ok) setError('Invalid credentials or the backend is unavailable.');
+  };
+
+  return (
+    <div className="min-h-screen bg-neutral-950 flex items-center justify-center p-4">
+      <form onSubmit={submit} className="w-full max-w-md bg-white rounded-2xl p-6 sm:p-8 shadow-2xl">
+        <div className="w-12 h-12 rounded-xl bg-neutral-900 text-white flex items-center justify-center font-bold mb-5">ADM</div>
+        <h1 className="text-2xl font-bold text-neutral-900">CMS Admin Login</h1>
+        <p className="text-sm text-neutral-500 mt-1 mb-6">Authenticate against the production API.</p>
+        {error && <div className="mb-4 rounded-lg bg-red-50 text-red-700 text-sm p-3">{error}</div>}
+        <label className="block text-sm font-medium mb-1">Email</label>
+        <input className="w-full border rounded-lg px-3 py-2.5 mb-4" type="email" value={email} onChange={e => setEmail(e.target.value)} required />
+        <label className="block text-sm font-medium mb-1">Password</label>
+        <input className="w-full border rounded-lg px-3 py-2.5 mb-5" type="password" value={password} onChange={e => setPassword(e.target.value)} required />
+        <button disabled={loading} className="w-full bg-neutral-900 text-white rounded-lg py-2.5 font-semibold disabled:opacity-50">
+          {loading ? 'Signing in…' : 'Sign in'}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+function CmsApp() {
+  const { user, isAdmin, loading, logout } = useAuth();
+  const [adminTab, setAdminTab] = useState<AdminTab>('dashboard');
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading…</div>;
+  if (!user || !isAdmin) return <Login />;
+
+  const exitToStorefront = () => {
+    window.location.href = import.meta.env.VITE_STOREFRONT_URL || 'http://127.0.0.1:5173';
+  };
+
+  return (
+    <AdminLayout currentTab={adminTab} onSelectTab={setAdminTab} onExitAdmin={exitToStorefront}>
+      {adminTab === 'dashboard' && <AdminDashboard onNavigateToTab={setAdminTab} onNavigateToStorefront={exitToStorefront} />}
+      {adminTab === 'analytics' && <AdminAnalytics onNavigateToTab={setAdminTab} />}
+      {adminTab === 'inventory' && <AdminInventory />}
+      {adminTab === 'products' && <AdminProducts />}
+      {adminTab === 'categories' && <AdminCategories />}
+      {adminTab === 'brands' && <AdminBrands />}
+      {adminTab === 'banners' && <AdminBanners />}
+      {adminTab === 'collections' && <AdminCollections />}
+      {adminTab === 'orders' && <AdminOrders />}
+      {adminTab === 'shipments' && <AdminShipments />}
+      {adminTab === 'returns' && <AdminReturns />}
+      {adminTab === 'reviews' && <AdminReviews />}
+      {adminTab === 'support' && <AdminSupport />}
+      {adminTab === 'customers' && <AdminCustomers onNavigateToTab={setAdminTab} />}
+      {adminTab === 'marketing' && <AdminMarketing />}
+    </AdminLayout>
+  );
+}
 
 export default function App() {
-  return (
-    <Router>
-      <AuthProvider>
-        <CartProvider>
-          <WishlistCompareProvider>
-            <div className="min-h-screen flex flex-col bg-neutral-50 font-sans text-neutral-900">
-              <Header />
-              <Navbar />
-              <main className="flex-1">
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/shop" element={<ShopPage />} />
-                  <Route path="/product/:slugOrId" element={<ProductDetailPage />} />
-                  <Route path="/products/:slugOrId" element={<ProductDetailPage />} />
-                  <Route path="/cart" element={<CartPage />} />
-                  <Route path="/checkout" element={<CheckoutPage />} />
-                  <Route path="/account" element={<AccountPage />} />
-                  <Route path="/account/profile" element={<AccountPage />} />
-                  <Route path="/account/notifications" element={<AccountPage />} />
-                  <Route path="/account/support" element={<AccountPage />} />
-                  <Route path="/account/questions" element={<AccountPage />} />
-                  <Route path="/account/coupons" element={<AccountPage />} />
-                  <Route path="/notifications" element={<AccountPage />} />
-                  <Route path="/support" element={<AccountPage />} />
-                  <Route path="/addresses" element={<AddressesPage />} />
-                  <Route path="/orders" element={<OrdersPage />} />
-                  <Route path="/account/orders" element={<OrdersPage />} />
-                  <Route path="/returns" element={<CustomerReturnsPage />} />
-                  <Route path="/account/returns" element={<CustomerReturnsPage />} />
-                  <Route path="/reviews" element={<CustomerReviewsPage />} />
-                  <Route path="/account/reviews" element={<CustomerReviewsPage />} />
-                  <Route path="/orders/:orderId" element={<OrderDetailPage />} />
-                  <Route path="/account/orders/:orderId" element={<OrderDetailPage />} />
-                  <Route path="/orders/:orderId/tracking" element={<OrderTrackingPage />} />
-                  <Route path="/account/orders/:orderId/tracking" element={<OrderTrackingPage />} />
-                  <Route path="/order-confirmation/:orderId" element={<OrderConfirmationPage />} />
-                  <Route path="/wishlist" element={<WishlistPage />} />
-                  <Route path="/compare" element={<ComparePage />} />
-                  <Route path="/collections" element={<CollectionsListPage />} />
-                  <Route path="/collections/:slug" element={<CollectionDetailPage />} />
-                </Routes>
-              </main>
-              <Footer />
-            </div>
-          </WishlistCompareProvider>
-        </CartProvider>
-      </AuthProvider>
-    </Router>
-  );
+  return <BrowserRouter><AuthProvider><CmsApp /></AuthProvider></BrowserRouter>;
 }
