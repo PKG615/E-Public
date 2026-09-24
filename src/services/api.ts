@@ -88,7 +88,14 @@ import {
   AnalyticsSupportResponse,
 } from '../types';
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api/v1').replace(/\/$/, '');
+const API_BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.DEV ? 'http://127.0.0.1:8000/api/v1' : '')
+).replace(/\/$/, '');
+
+if (!API_BASE_URL) {
+  console.error('VITE_API_BASE_URL is not set. Add it in Vercel > Project Settings > Environment Variables and redeploy.');
+}
 
 const API_ORIGIN = API_BASE_URL.replace(/\/api\/v1$/, '');
 

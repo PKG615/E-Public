@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { CartProvider } from "./context/CartContext";
+import { WishlistCompareProvider } from "./context/WishlistCompareContext";
 
 // ==================== PUBLIC STOREFRONT ====================
 import { Header } from "./components/common/Header";
@@ -271,13 +273,17 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
-          {/* ================= PUBLIC STORE ================= */}
-          <Route path="/admin/*" element={<CmsApp />} />
+        <CartProvider>
+          <WishlistCompareProvider>
+            <Routes>
+              {/* ================= ADMIN / CMS ================= */}
+              <Route path="/admin/*" element={<CmsApp />} />
 
-          {/* ================= CUSTOMER STORE ================= */}
-          <Route path="/*" element={<StorefrontLayout />} />
-        </Routes>
+              {/* ================= CUSTOMER STORE ================= */}
+              <Route path="/*" element={<StorefrontLayout />} />
+            </Routes>
+          </WishlistCompareProvider>
+        </CartProvider>
       </AuthProvider>
     </BrowserRouter>
   );

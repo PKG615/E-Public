@@ -1,13 +1,14 @@
-# ==========================================
-# CMS Frontend - Git Ignore
-# ==========================================
-
-# Environment files
+# Environment files (set these in Vercel > Settings > Environment Variables)
+.env
+.env.*
+!.env.example
 
 # Node dependencies
 node_modules/
 
 # Build output
+dist/
+.vercel/
 
 # Logs
 npm-debug.log*
@@ -35,8 +36,7 @@ Thumbs.db
 *.tmp
 *.temp
 *.swp
-*.swo  
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
+*.swo
 
 # Local configuration
 *.local
